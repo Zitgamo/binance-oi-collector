@@ -30,6 +30,14 @@ jobs:
       - name: Run collector tests
         run: python -m unittest discover -s tests -v
 
+      - name: Diagnose fixed Binance USD-M hosts
+        shell: bash
+        run: |
+          for host in fapi.binance.com fapi1.binance.com fapi2.binance.com fapi3.binance.com fapi4.binance.com; do
+            status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' "https://$host/fapi/v1/openInterest?symbol=BTCUSDT" || true)
+            echo "$host HTTP $status"
+          done
+
       - name: Collect complete 10/10 snapshot
         run: python collect_oi.py --output data/binance_v1_forward_oi.csv --base-url https://fapi1.binance.com
 
