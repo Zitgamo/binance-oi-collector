@@ -22,12 +22,21 @@ No Binance API key is required. The endpoint is public and read-only.
 
 ## GitHub Actions
 
-`.github/workflows/collect-oi.yml` runs at minute 7 of every UTC hour and can
-also be triggered manually. It runs the tests, collects a full snapshot, and
-commits the updated CSV. Repository Actions must be allowed to write contents.
+`.github/workflows/collect-oi.yml` runs the tests, collects a full snapshot,
+and commits the updated CSV. Repository Actions must be allowed to write
+contents.
 
-GitHub schedules are best-effort and can be delayed. For strict collection
-timing, run the same command from a VPS cron or systemd timer instead.
+The workflow targets a self-hosted Linux x64 runner carrying the custom label
+`binance-oi`. GitHub-hosted `ubuntu-latest` was verified to run in Azure
+`westus`, where Binance USD-M Futures returned HTTP 451. Do not route around
+that restriction with an untrusted proxy. Register a self-hosted runner in a
+jurisdiction where the official Binance endpoint is available, verify a manual
+run, then add the hourly schedule:
+
+```yaml
+schedule:
+  - cron: "7 * * * *"
+```
 
 ## Data contract
 
